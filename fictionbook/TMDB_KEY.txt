@@ -1,0 +1,12 @@
+FICTIONBOOK — TMDB KEY SETUP
+
+1. Open .env.local in this folder (same folder as package.json).
+2. Replace PASTE_YOUR_TMDB_API_KEY_HERE with your TMDB API Key (v3 auth).
+3. Save the file.
+4. Run: npm install
+5. Run: npm run dev
+
+If you received the longer API Read Access Token instead of the short API Key, replace the file contents with:
+VITE_TMDB_READ_TOKEN=PASTE_YOUR_READ_ACCESS_TOKEN_HERE
+
+Vite does not read a plain .txt file as environment variables, so the actual credential must be placed in .env.local. Do not share or commit this file. VITE_ variables are visible to browser code and are suitable for this local demo only.

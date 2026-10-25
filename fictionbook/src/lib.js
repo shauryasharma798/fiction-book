@@ -1,0 +1,10 @@
+export const STORE_KEY="fictionbook-v1";
+export const uid=()=>globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(16).slice(2)}`;
+export const emptyState=()=>({users:[],currentUserId:null,lists:{},ratings:{},reviews:{},profiles:{},theme:{mode:"dark",accent:"#ff4fa3",light:false},friends:{},friendRequests:{},posts:[],recentlyViewed:[],onboardingDone:{}});
+export function loadState(){try{return {...emptyState(),...JSON.parse(localStorage.getItem(STORE_KEY)||"{}")}}catch{return emptyState()}}
+export function saveState(s){try{localStorage.setItem(STORE_KEY,JSON.stringify(s));return true}catch{return false}}
+export const listKey=(u,t)=>`${u}:${t}`;
+export function ageFromDate(s){if(!s)return 0;const d=new Date(s),n=new Date();let a=n.getFullYear()-d.getFullYear();if(n.getMonth()<d.getMonth()||(n.getMonth()===d.getMonth()&&n.getDate()<d.getDate()))a--;return a}
+export async function hashPassword(password,saltText){if(!globalThis.crypto?.subtle)throw Error("Web Crypto is unavailable. Use localhost or HTTPS.");const salt=saltText?Uint8Array.from(atob(saltText),c=>c.charCodeAt(0)):crypto.getRandomValues(new Uint8Array(16));const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(password),"PBKDF2",false,["deriveBits"]);const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:180000,hash:"SHA-256"},key,256);return{salt:btoa(String.fromCharCode(...salt)),hash:btoa(String.fromCharCode(...new Uint8Array(bits)))}}
+export function contrastText(hex){let h=(hex||"#ff4fa3").replace("#","");if(h.length===3)h=h.split("").map(x=>x+x).join("");const v=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4);return .2126*v[0]+.7152*v[1]+.0722*v[2]>.42?"#150c12":"#fff"}
+export function applyTheme(t){document.documentElement.dataset.theme=t.mode==="rainbow"?"rainbow":t.light?"light":"dark";document.documentElement.style.setProperty("--accent",t.accent||"#ff4fa3");document.documentElement.style.setProperty("--accent-ink",contrastText(t.accent))}
